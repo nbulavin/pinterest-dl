@@ -485,12 +485,14 @@ class Api:
             result (str, str): (username, boardname)
         """
         result = re.search(
-            r"https://(?:[a-z0-9-]+\.)?pinterest\.com/([A-Za-z0-9_-]+)/([A-Za-z0-9_-]+)/?$",
+            r"https://(?:[a-z0-9-]+\.)?pinterest\.com/([A-Za-z0-9_%-]+)/([A-Za-z0-9_%-]+)/?$",
             url,
         )
         if not result:
             raise InvalidBoardUrlError(f"Invalid Pinterest board URL: {url}")
-        return result.group(1), result.group(2)
+        username = request_builder.url_decode(result.group(1))
+        boardname = request_builder.url_decode(result.group(2))
+        return username, boardname
 
     @staticmethod
     def _parse_section_url(url: str) -> Tuple[str, str, str]:
@@ -503,9 +505,12 @@ class Api:
             result (str, str, str): (username, boardname, section_slug)
         """
         result = re.search(
-            r"https://(?:[a-z0-9-]+\.)?pinterest\.com/([A-Za-z0-9_-]+)/([A-Za-z0-9_-]+)/([A-Za-z0-9_-]+)/?$",
+            r"https://(?:[a-z0-9-]+\.)?pinterest\.com/([A-Za-z0-9_%-]+)/([A-Za-z0-9_%-]+)/([A-Za-z0-9_%-]+)/?$",
             url,
         )
         if not result:
             raise InvalidSectionUrlError(f"Invalid Pinterest section URL: {url}")
-        return result.group(1), result.group(2), result.group(3)
+        username = request_builder.url_decode(result.group(1))
+        boardname = request_builder.url_decode(result.group(2))
+        section_slug = request_builder.url_decode(result.group(3))
+        return username, boardname, section_slug

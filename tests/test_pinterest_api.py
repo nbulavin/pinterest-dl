@@ -98,3 +98,53 @@ class TestPinterestAPIUrlParsing:
         api2 = Api("https://de.pinterest.com/user/board/section/")
         assert api2.is_section is True
         assert api2.section_slug == "section"
+
+    def test_cyrillic_board_url(self):
+        """Test parsing Cyrillic board URL with URL encoding."""
+        api = Api("https://ru.pinterest.com/testuser/%D1%84%D1%80%D0%B5%D0%B3%D0%B0%D1%82-%D0%BE%D1%80%D0%B5%D0%BB/")
+        assert api.username == "testuser"
+        assert api.boardname == "фрегат-орел"
+        assert api.is_section is False
+
+    def test_cyrillic_section_url(self):
+        """Test parsing Cyrillic section URL with URL encoding."""
+        api = Api("https://ru.pinterest.com/testuser/%D1%84%D1%80%D0%B5%D0%B3%D0%B0%D1%82-%D0%BE%D1%80%D0%B5%D0%BB/%D0%BC%D0%BE%D1%80%D0%B5/")
+        assert api.username == "testuser"
+        assert api.boardname == "фрегат-орел"
+        assert api.section_slug == "море"
+        assert api.is_section is True
+
+    def test_mixed_ascii_cyrillic_board_url(self):
+        """Test parsing board URL with mixed ASCII and Cyrillic characters."""
+        api = Api("https://ru.pinterest.com/user123/board-%D1%84%D1%80%D0%B5%D0%B3%D0%B0%D1%82/")
+        assert api.username == "user123"
+        assert api.boardname == "board-фрегат"
+        assert api.is_section is False
+
+    def test_cyrillic_board_url_without_trailing_slash(self):
+        """Test parsing Cyrillic board URL without trailing slash."""
+        api = Api("https://ru.pinterest.com/testuser/%D1%84%D1%80%D0%B5%D0%B3%D0%B0%D1%82-%D0%BE%D1%80%D0%B5%D0%BB")
+        assert api.username == "testuser"
+        assert api.boardname == "фрегат-орел"
+
+    def test_cyrillic_section_url_without_trailing_slash(self):
+        """Test parsing Cyrillic section URL without trailing slash."""
+        api = Api("https://ru.pinterest.com/testuser/%D1%84%D1%80%D0%B5%D0%B3%D0%B0%D1%82-%D0%BE%D1%80%D0%B5%D0%BB/%D0%BC%D0%BE%D1%80%D0%B5")
+        assert api.username == "testuser"
+        assert api.boardname == "фрегат-орел"
+        assert api.section_slug == "море"
+        assert api.is_section is True
+
+    def test_cyrillic_with_underscore_and_hyphen(self):
+        """Test Cyrillic URLs with underscores and hyphens."""
+        api = Api("https://ru.pinterest.com/testuser_%D1%82%D0%B5%D1%81%D1%82/board-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80/")
+        assert api.username == "testuser_тест"
+        assert api.boardname == "board-пример"
+
+    def test_multiple_cyrillic_sections(self):
+        """Test multiple Cyrillic sections in URL."""
+        api = Api("https://ru.pinterest.com/%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8C/%D0%B4%D0%BE%D1%81%D0%BA%D0%B0/%D1%80%D0%B0%D0%B7%D0%B4%D0%B5%D0%BB/")
+        assert api.username == "пользователь"
+        assert api.boardname == "доска"
+        assert api.section_slug == "раздел"
+        assert api.is_section is True
