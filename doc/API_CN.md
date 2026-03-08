@@ -4,6 +4,13 @@
 
 > **💡 更喜欢示例？** 查看 [examples/](../examples/) 目录获取涵盖所有用例的可运行示例。
 
+> **📦 可选依赖：** 某些功能需要额外的包：
+> - **图像操作**（分辨率检测、使用 `min_resolution` 修剪）：需要 `pillow`。安装：`pip install pinterest-dl[image]`
+> - **元数据嵌入**（`caption="metadata"`）：需要 `pyexiv2`。安装：`pip install pinterest-dl[exif]`
+> - **所有功能**：安装：`pip install pinterest-dl[all]`
+>
+> 没有这些可选依赖时，您仍然可以抓取和下载图像，但需要图像分析的功能将会抛出友好的 `ImportError` 提示。
+
 ## 目录
 - [Python API 使用指南](#python-api-使用指南)
   - [目录](#目录)
@@ -42,11 +49,11 @@ images = PinterestDL.with_api(
     output_dir="images/art",                       # 保存下载图片的目录
     num=30,                                        # 最大下载数量
     download_streams=True,                         # 下载视频流（如可用）（默认：False）
-    min_resolution=(512, 512),                     # 最低分辨率（宽，高）（默认：None）
+    min_resolution=(512, 512),                     # 最低分辨率（宽，高）（默认：None）- 需要 pillow
     cache_path="art.json",                         # 缓存抓取数据为 JSON 的路径（默认：None）
     caption="txt",                                 # 标题格式：'txt' 为独立文件中的 alt 文本，
                                                    # 'json' 为独立文件中的完整图片数据，
-                                                   # 'metadata' 嵌入图片文件，'none' 无标题
+                                                   # 'metadata' 嵌入图片文件（需要 pyexiv2），'none' 无标题
     delay=0.4,                                     # 请求之间的延迟（默认：0.2）
 )
 ```
@@ -70,9 +77,11 @@ images = PinterestDL.with_api(
     output_dir="images/art",            # 保存下载图片的目录
     num=30,                             # 最大下载数量
     download_streams=True,              # 下载视频流（如可用）（默认：False）
-    min_resolution=(512, 512),          # 最低分辨率（宽，高）（默认：None）
+    min_resolution=(512, 512),          # 最低分辨率（宽，高）（默认：None）- 需要 pillow
     cache_path="art.json",              # 缓存抓取数据为 JSON 的路径（默认：None）
-    caption="txt",                      # 标题格式
+    caption="txt",                      # 标题格式：'txt' 为独立文件中的 alt 文本，
+                                        # 'json' 为独立文件中的完整图片数据，
+                                        # 'metadata' 嵌入图片文件（需要 pyexiv2），'none' 无标题
     delay=0.4,                          # 请求之间的延迟（默认：0.2）
 )
 ```

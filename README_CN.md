@@ -67,19 +67,51 @@
 - （可选）Playwright 浏览器：`playwright install chromium` 或 `playwright install firefox`
 - （可选）Selenium 后端：Chrome 或 Firefox 浏览器及对应 WebDriver
 - （可选）[ffmpeg](https://ffmpeg.org/) 用于视频转封装为 MP4（`--video` 选项）。如果转封装失败，会自动回退到重新编码。使用 `--skip-remux` 可以下载原始 .ts 文件无需 ffmpeg。
+- （可选）用于图像分辨率检测和修剪，需要 `pillow` 库。安装命令：`pip install pinterest-dl[image]`。
+- （可选）用于将 `alt` 文本嵌入为元数据，需要 `pyexiv2` 库。安装命令：`pip install pinterest-dl[exif]`。
 
 ## 📥 安装指南
 
 ### 通过 pip 安装（推荐）
+
+**基础安装**（仅核心功能）：
 ```bash
 pip install pinterest-dl
 ```
+
+**包含可选依赖**：
+```bash
+# 包含图像操作（分辨率检测、修剪）
+pip install pinterest-dl[image]
+
+# 包含 EXIF 元数据支持（将 alt 文本嵌入为元数据）
+pip install pinterest-dl[exif]
+
+# 包含所有图像/元数据功能
+pip install pinterest-dl[metadata]
+# 或
+pip install pinterest-dl[all]
+
+# 开发版本（包含测试工具）
+pip install pinterest-dl[dev,all]
+```
+
+> [!NOTE]
+> **可选依赖说明：**
+> - `image` - 安装 Pillow，用于图像分辨率检测和修剪功能
+> - `exif` - 安装 pyexiv2，用于 EXIF 元数据嵌入（将 alt 文本作为元数据注释）
+> - `metadata` / `all` - 同时安装 Pillow 和 pyexiv2
+> - `dev` - 安装测试工具（pytest、pytest-mock）
+>
+> 没有可选依赖时，您仍然可以抓取和下载图像，但需要图像分析的功能（分辨率检测、元数据嵌入）将会抛出友好的错误提示。
 
 ### 从 GitHub 克隆
 ```bash
 git clone https://github.com/sean1832/pinterest-dl.git
 cd pinterest-dl
 pip install .
+# 或包含可选依赖
+pip install .[all]
 ```
 
 

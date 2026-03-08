@@ -69,19 +69,50 @@ It includes a [CLI](#-cli-usage) for direct usage and a [Python API](#️-python
 - (Optional) Playwright browsers: `playwright install chromium` or `playwright install firefox`
 - (Optional) For Selenium backend: Chrome or Firefox browser with matching WebDriver
 - (Optional) [ffmpeg](https://ffmpeg.org/) for video remuxing to MP4 (with `--video` option). If remux fails, automatically falls back to re-encoding. Use `--skip-remux` to download raw .ts files without ffmpeg.
+- (Optional) For image resolution detection and pruning, requires `pillow` library. Install with `pip install pinterest-dl[image]`.
+- (Optional) For embedding `alt` text as metadata comment, requires `pyexiv2` library. Install with `pip install pinterest-dl[exif]`.
 
 ## 📥 Installation
 
 ### Using pip (Recommended)
+
+**Basic installation** (core functionality only):
 ```bash
 pip install pinterest-dl
 ```
+
+**With optional dependencies**:
+```bash
+# With image operations (resolution detection, pruning)
+pip install pinterest-dl[image]
+
+# With EXIF metadata support (embed alt text as metadata)
+pip install pinterest-dl[exif]
+
+# With all image/metadata features
+pip install pinterest-dl[metadata]
+
+# For development (includes testing tools)
+pip install pinterest-dl[dev,all]
+```
+
+> [!NOTE]
+> **Optional Dependencies:**
+> - `image` - Installs Pillow for image resolution detection and pruning features
+> - `exif` - Installs pyexiv2 for EXIF metadata embedding (alt text as metadata comment)
+> - `metadata` - Installs both Pillow and pyexiv2
+> - `all` - Installs all optional dependencies (Currently Pillow and pyexiv2)
+> - `dev` - Installs testing tools (pytest, pytest-mock)
+>
+> Without optional dependencies, you can still scrape and download images, but features requiring image analysis (resolution detection, metadata embedding) will raise an informative error.
 
 ### Cloning from GitHub
 ```bash
 git clone https://github.com/sean1832/pinterest-dl.git
 cd pinterest-dl
 pip install .
+# Or with optional dependencies
+pip install .[all]
 ```
 
 ## 🚀 Quick Start

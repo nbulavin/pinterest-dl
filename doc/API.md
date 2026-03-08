@@ -4,6 +4,13 @@ You can use the `PinterestDL` class directly in your Python code to scrape and d
 
 > **💡 Prefer examples?** Check out the [examples/](../examples/) directory for runnable examples covering all use cases.
 
+> **📦 Optional Dependencies:** Some features require additional packages:
+> - **Image operations** (resolution detection, pruning with `min_resolution`): Requires `pillow`. Install with `pip install pinterest-dl[image]`
+> - **Metadata embedding** (`caption="metadata"`): Requires `pyexiv2`. Install with `pip install pinterest-dl[exif]`
+> - **All features**: Install with `pip install pinterest-dl[all]`
+>
+> Without these optional dependencies, you can still scrape and download images, but features requiring image analysis will raise an informative `ImportError`.
+
 ## Table of Contents
 - [Python API Guide](#python-api-guide)
   - [Table of Contents](#table-of-contents)
@@ -42,9 +49,9 @@ images = PinterestDL.with_api(
     output_dir="images/art",  # Directory to save downloaded images
     num=30,  # Max number of images to download 
     download_streams=True,  # Download video streams if available (default: False)
-    min_resolution=(512, 512),  # Minimum resolution for images (width, height) (default: None)
+    min_resolution=(512, 512),  # Minimum resolution for images (width, height) (default: None) - requires pillow
     cache_path="art.json",  #  Path to cache scraped data as json (default: None)
-    caption="txt",  # Caption format for downloaded images: 'txt' for alt text in separate files, 'json' for full image data in seperate file, 'metadata' embeds in image files, 'none' for no captions
+    caption="txt",  # Caption format for downloaded images: 'txt' for alt text in separate files, 'json' for full image data in seperate file, 'metadata' embeds in image files (requires pyexiv2), 'none' for no captions
     delay=0.4,  # Delay between requests (default: 0.2)
 )
 ```
@@ -68,9 +75,9 @@ images = PinterestDL.with_api(
     output_dir="images/art",  # Directory to save downloaded images
     num=30,  # Max number of images to download 
     download_streams=True,  # Download video stream if available (default: False)
-    min_resolution=(512, 512),  # Minimum resolution for images (width, height) (default: None)
+    min_resolution=(512, 512),  # Minimum resolution for images (width, height) (default: None) - requires pillow
     cache_path="art.json",  #  Path to cache scraped data as json (default: None)
-    caption="txt",  # Caption format for downloaded images: 'txt' for alt text in separate files, 'json' for full image data in seperate file, 'metadata' embeds in image files, 'none' for no captions
+    caption="txt",  # Caption format for downloaded images: 'txt' for alt text in separate files, 'json' for full image data in seperate file, 'metadata' embeds in image files (requires pyexiv2), 'none' for no captions
     delay=0.4,  # Delay between requests (default: 0.2)
 )
 ```

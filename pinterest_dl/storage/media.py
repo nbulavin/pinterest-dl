@@ -6,16 +6,82 @@ Separated from the data model to maintain clear separation of concerns.
 """
 
 from pathlib import Path
-from typing import Tuple
-
-import pyexiv2
-from PIL import Image
+from typing import TYPE_CHECKING, Any, Optional, Tuple
 
 from pinterest_dl.common.logging import get_logger
 from pinterest_dl.domain.media import PinterestMedia
 from pinterest_dl.exceptions import UnsupportedMediaTypeError
 
+if TYPE_CHECKING:
+    import pyexiv2  # type: ignore
+    from PIL import Image as PILImage  # type: ignore
+
 logger = get_logger(__name__)
+
+# Module-level lazy imports (checked only once)
+_pyexiv2: Optional[Any] = None
+_pyexiv2_available: Optional[bool] = None
+
+_PIL: Optional[Any] = None
+_PIL_available: Optional[bool] = None
+
+
+def _get_pyexiv2() -> Any:
+    """Lazy import pyexiv2, caching the result.
+
+    Returns:
+        pyexiv2 module if available.
+
+    Raises:
+        ImportError: If pyexiv2 is not installed.
+    """
+    global _pyexiv2, _pyexiv2_available
+
+    if _pyexiv2_available is None:
+        try:
+            import pyexiv2  # type: ignore
+
+            _pyexiv2 = pyexiv2
+            _pyexiv2_available = True
+        except ImportError:
+            _pyexiv2_available = False
+
+    if not _pyexiv2_available:
+        raise ImportError(
+            "pyexiv2 is required for EXIF operations. "
+            "Install it with: pip install pyexiv2"
+        )
+
+    return _pyexiv2
+
+
+def _get_PIL() -> Any:
+    """Lazy import PIL, caching the result.
+
+    Returns:
+        PIL module if available.
+
+    Raises:
+        ImportError: If Pillow is not installed.
+    """
+    global _PIL, _PIL_available
+
+    if _PIL_available is None:
+        try:
+            from PIL import Image
+
+            _PIL = Image
+            _PIL_available = True
+        except ImportError:
+            _PIL_available = False
+
+    if not _PIL_available:
+        raise ImportError(
+            "Pillow is required for image operations. "
+            "Install it with: pip install pillow"
+        )
+
+    return _PIL
 
 
 def set_local_resolution(media: PinterestMedia, path: Path) -> None:
@@ -28,6 +94,7 @@ def set_local_resolution(media: PinterestMedia, path: Path) -> None:
     Raises:
         UnsupportedMediaTypeError: If file format is not supported.
         FileNotFoundError: If file does not exist.
+        ImportError: If Pillow is not installed.
     """
     # Skip resolution setting for video files
     if path.suffix.lower() in {".mp4", ".mkv", ".avi", ".mov"}:
@@ -48,6 +115,7 @@ def set_local_resolution(media: PinterestMedia, path: Path) -> None:
         raise FileNotFoundError(f"Local path {media.local_path} does not exist.")
 
     # Read and set resolution from image
+    Image = _get_PIL()
     with Image.open(media.local_path) as img:
         media.resolution = (img.width, img.height)
 
@@ -92,7 +160,10 @@ def write_exif_comment(media: PinterestMedia, comment: str) -> None:
 
     Raises:
         ValueError: If local path is not set.
+        ImportError: If pyexiv2 is not installed.
     """
+    pyexiv2 = _get_pyexiv2()
+
     if not media.local_path:
         raise ValueError("Local path not set.")
 
@@ -109,7 +180,10 @@ def write_exif_subject(media: PinterestMedia, subject: str) -> None:
 
     Raises:
         ValueError: If local path is not set.
+        ImportError: If pyexiv2 is not installed.
     """
+    pyexiv2 = _get_pyexiv2()
+
     if not media.local_path:
         raise ValueError("Local path not set.")
 
